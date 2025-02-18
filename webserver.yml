@@ -1,0 +1,11 @@
+---
+- name: Deploy apache web server on Centos
+  host: centos
+  become: true
+  
+  tasks: 
+   
+  - name: Install apache (httpd)
+    yum: 
+      name: httpd
+      state: present
