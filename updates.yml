@@ -1,0 +1,38 @@
+---
+- name: Aplicar actualizaciones
+  hosts: all
+  become: true
+
+  tasks:
+
+  - name: Instalar todas las actualizaciones de seguirdad de redhat
+    ansible.builtin.dnf:
+      name: "*"
+      security: true
+      state: latest
+    when: ansible_os_family == "RedHat"
+    notify: Reiniciar
+
+  - name: Instalar todas las actualizaciones de seguirdad de Debian
+    ansible.builtin.apt:
+      name: "*"
+      update_cache: true
+      state: latest
+    when: ansible_os_family == "Debian"
+    notify: Reiniciar
+    register: install_results
+
+  - name: Veo variable
+    ansible.builtin.debug:
+      msg: "{{ install_results }}"
+
+  - name: Creo log de actualizacion
+    ansible.builtin.copy:
+      dest: install.log
+      content: "{{ install_resultss }}"
+
+  handlers:
+
+  - name: Reiniciar
+    ansible.builtin.reboot:
+      msg: "Reiniicando por actualizaciones"
